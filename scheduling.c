@@ -10,31 +10,8 @@
 #define BUFFER_MAX_LENGTH 1024
 #define USER_SIZE 10
 
-//这玩意好鸡巴难 我他妈透了 卧槽
-
 /*
-1. initialize variables
-    a. number of processes
-    b. tq
-2. read string by string (queue by queue)
-    a. create 2d array for each line
-        - 1D: process number
-        - 2D: process times
-3. implement 3 functions
-    a. each function will take a 2d array and a processNum as input, rr will take an extra "timeQuantum" parameter
-    b. perform corresponding algorithms on this array
-    c. output to main
-4. main
-    a. take all output and write to new file
-*/
-
-
-/*
-FIRST COME FIRST SERVE
-1. Make total process time counter
-2. Loop through the array
-3. Increment the processtime by its value
-4. Print the order
+    Main fcfs function
 */
 int fcfs(char **arr_fcfs, int pCounter)
 {
@@ -59,39 +36,54 @@ int fcfs(char **arr_fcfs, int pCounter)
 
 
 
+/*
+    A struct that defines two variables for the original value and their index
+*/
+struct sjf_struct
+{
+    int value;
+    int index;
+};
 
+/*
+    A helper function for sjf, compare two pointers and set return accordingly
+*/
+int sjf_cmp(const void *a, const void *b)
+{
+    struct sjf_struct *a1 = (struct sjf_struct *)a;
+    struct sjf_struct *a2 = (struct sjf_struct *)b;
+    if ((*a1).value < (*a2).value)
+        return -1;
+    else if ((*a1).value > (*a2).value)
+        return 1;
+    else
+        return 0;
+}
 
-
-
-
+/*
+    Main sjf function, using qsort() to sort the array elements in ascending order
+*/
 int sjf(char **arr_sjf, int pCounter)
 {
-    char keys[pCounter];
     char *temp;
-    int k;
     int finalTime = 0;
     int totalTime = 0;
-    printf("        Order of selection by CPU:  \n\n");
-    // for (k = 0; k < pCounter; k++)
-    // {
-    //     keys[atoi(arr_sjf[k])-1] = k;
-    //     // keys[k] = atoi(arr_sjf[k]);
-    //     // printf("%d - %d\n", atoi(arr_sjf[k]), k+1);
-    // }
-    for (k = 0; k < pCounter; k++)
+    struct sjf_struct objects[pCounter];
+    for (int i = 0; i < pCounter; i++)
     {
-        keys[k] = atoi(arr_sjf[k]);
-        printf("P%d = %d\n", k + 1, keys[k] );
+        objects[i].value = atoi(arr_sjf[i]);
+        objects[i].index = i;
     }
-
-    printf("           ");
-    // for (k = 0; k < pCounter; k++) {
-    //     printf("P%d ", keys[k]+1);
-    // }
+    qsort(objects, pCounter, sizeof(objects[0]), sjf_cmp);
+    printf("        Order of selection by CPU:  \n\n");
+    printf("            ");
+    for (int i = 0; i < pCounter; i++)
+    {
+        printf("P%d ", objects[i].index + 1); //will give 1 2 0
+    }
     printf("\n\n        Individual waiting times for each process:   \n\n");
     for (int i = 0; i < pCounter; i++)
     {
-        keys[atoi(arr_sjf[i]) - 1] = i;
         for (int j = i + 1; j < pCounter; j++)
         {
             if (atoi(arr_sjf[i]) > atoi(arr_sjf[j]))
@@ -101,8 +93,7 @@ int sjf(char **arr_sjf, int pCounter)
                 arr_sjf[j] = temp;
             }
         }
-        // printf("            P%d = %d\n", keys[i]+1, finalTime);
-        printf("            P%d = %d\n", keys[i], finalTime);
+        printf("            P%d = %d\n", objects[i].index + 1, finalTime);
         finalTime = finalTime + atoi(arr_sjf[i]);
         totalTime = totalTime + finalTime;
     }
@@ -112,25 +103,25 @@ int sjf(char **arr_sjf, int pCounter)
 }
 
 
-
-
-
-
-
-
-
+/*
+    Main rr function
+        1. FCFS, check process time to tq. 
+            a. If process time < tq, proceed FCFS
+            b. Else, time remains = process time - tq, proceed FCFS
+        2. That's pretty much it lol
+*/
 int rr(char **arr_rr, int pCounter, int tq)
 {
-    printf("        Array received by rr, time quantum = %d: \n", tq);
-    for (int i = 0; i < pCounter-1; i++) {
-        printf("            %s\n", arr_rr[i]);
+    int finalTime = 0;
+    int totalTime = 0;
+    int timeRemains = 0;
+    printf("            Order of selection by CPU:  \n\n");
+    printf("                ");
+    for (int i = 0; i < pCounter; i++) {
+        printf("P%d ", i+1);
     }
     return 0;
 }
-
-
-
-
 
 
 
@@ -207,10 +198,10 @@ int main(int argc, char const *argv[])
         }
         // printf("        Ready Queue %lu Applying FCFS Scheduling:\n\n", j+1);
         // fcfs(processArr, proCounter);
-        printf("    Ready Queue %zu Applying SJF Scheduling...\n\n", j+1);
-        sjf(processArr, proCounter);
-        // printf("    Ready Queue %zu Applying RR Scheduling...\n", j+1);
-        // rr(processArr, proCounter, timeQuantum);
+        // printf("    Ready Queue %zu Applying SJF Scheduling...\n\n", j+1);
+        // sjf(processArr, proCounter);
+        printf("    Ready Queue %zu Applying RR Scheduling...\n\n", j+1);
+        rr(processArr, proCounter, timeQuantum);
     }
 
 
@@ -219,3 +210,4 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+
