@@ -142,21 +142,12 @@ int main(int argc, char const *argv[])
     char *lineArr[BUFFER_MAX_LENGTH];
     char *splitArr[BUFFER_MAX_LENGTH];
     char *processArr[BUFFER_MAX_LENGTH];
-    if (argc != 2)
-    {
-        printf("Invalid number of arguments\n\n");
-        exit(0);
-    } else
-    {
-        file = fopen(fileName, "r");
-    }
-
+    file = fopen("cpu_scheduling_input_file.txt", "r");
     if (!file)
     {
-         fprintf(stderr, "error: could not open textfile: %s\n", argv[1]);
+         fprintf(stderr, "error: could not open textfile: cpu_scheduling_input_file.txt\n");
          return EXIT_FAILURE;
     }
-
     while (fgets(line, sizeof(line), file) != NULL) {
         lineArr[lineCounter] = malloc(sizeof(line));
         strcpy(lineArr[lineCounter], line);
