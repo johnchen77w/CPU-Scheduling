@@ -112,16 +112,41 @@ int sjf(char **arr_sjf, int pCounter)
 */
 int rr(char **arr_rr, int pCounter, int tq)
 {
-    int finalTime = 0;
-    int totalTime = 0;
-    int timeRemains = 0;
-    printf("            Order of selection by CPU:  \n\n");
-    printf("                ");
-    for (int i = 0; i < pCounter; i++) {
-        printf("P%d ", i+1);
+    int flag = 0; // 0 = false, 1 = true
+    int process_remains = pCounter;
+    int pQueue [pCounter]; 
+    for (int i = 0; i < pCounter; i++)
+    {
+        pQueue[i] = atoi(arr_rr[i]);
+        printf("P%d: %d ", i + 1, pQueue[i]);
     }
+    while (flag == 0)
+    {
+        printf("\n");
+        for (int i = 0; i < pCounter; i++)
+        {
+            if (pQueue[i] >= tq)
+            {
+                pQueue[i] -= tq;
+                printf("P%d: %d ", i + 1, pQueue[i]);
+            }
+            else if (pQueue[i] < tq)
+            {
+                process_remains --;
+                break;
+            }
+        }
+        if (process_remains == 0)
+            {
+                flag = 1;
+            }
+    }
+    
+
+       
     return 0;
 }
+
 
 
 
