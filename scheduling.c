@@ -115,20 +115,22 @@ int rr(char **arr_rr, int pCounter, int tq)
     int flag = 0; // 0 = false, 1 = true
     int process_remains = pCounter;
     int pQueue [pCounter]; 
+    printf("            Order of selection by CPU:  \n\n");
+    printf("                ");
     for (int i = 0; i < pCounter; i++)
     {
         pQueue[i] = atoi(arr_rr[i]);
-        printf("P%d: %d ", i + 1, pQueue[i]);
+        printf("P%d ", i + 1);
     }
+
     while (flag == 0)
     {
-        printf("\n");
         for (int i = 0; i < pCounter; i++)
         {
             if (pQueue[i] >= tq)
             {
                 pQueue[i] -= tq;
-                printf("P%d: %d ", i + 1, pQueue[i]);
+                printf("P%d ", i + 1);
             }
             else if (pQueue[i] < tq)
             {
