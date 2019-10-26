@@ -105,17 +105,10 @@ int sjf(char **arr_sjf, int pCounter)
 
 /*
     Main rr function
-        1. FCFS, check process time to tq. 
-            a. If process time < tq, proceed FCFS
-            b. Else, time remains = process time - tq, proceed FCFS
-        2. That's pretty much it lol
-*/
-/*
-    Main rr function
 */
 int rr(char **arr_rr, int pCounter, int tq)
 {
-    int flag = 0; // 0 = false, 1 = true
+    int finished = 0; // 0 = finished, 1 = not finished yet
     int process_remains = pCounter;
     int pQueue [pCounter]; 
     printf("            Order of selection by CPU:  \n\n");
@@ -123,36 +116,35 @@ int rr(char **arr_rr, int pCounter, int tq)
     for (int i = 0; i < pCounter; i++)
     {
         pQueue[i] = atoi(arr_rr[i]);
-        printf("P%d ", i + 1);
+        printf("P%d=%d ", i, pQueue[i]);
     }
-    while (flag == 0)
+    printf("            \n\n");
+    printf("                ");
+    while (finished == 0)
     {
         for (int i = 0; i < pCounter; i++)
         {
             if (pQueue[i] > tq)
             {
-                pQueue[i] -= tq;
-                printf("P%d ", i + 1);
+                pQueue[i] = pQueue[i] - tq;
+                printf("P%d=%d ", i, pQueue[i]);
             }
             else if (pQueue[i] <= tq)
             {
                 process_remains --;
-                break;
             }
-            else 
+            if (process_remains == 0)
             {
-                process_remains --;
-                break;
+                finished = 1;
             }
         }
-        if (process_remains == 0)
-            {
-                flag = 1;
-            }
-    }
+        printf("            \n\n");
+        printf("                ");
+    }  
     printf("\n");
     return 0;
 }
+
 
 
 
