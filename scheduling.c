@@ -54,6 +54,7 @@ struct sjf_struct
 int sjf_cmp(const void *a, const void *b)
 {
     struct sjf_struct *a1 = (struct sjf_struct *)a;
+    // wchen466
     struct sjf_struct *a2 = (struct sjf_struct *)b;
     // Compare the first value to the second value
     if ((*a1).value < (*a2).value)
@@ -130,6 +131,7 @@ int rr(char **arr_rr, int pCounter, int tq, FILE *new_file)
     int finished = 0; // 0 = finished, 1 = not finished yet
     int process_remains;
     int pQueue [pCounter]; 
+    // wchen466
     fprintf(new_file, "        Order of selection by CPU:  \n\n");
     fprintf(new_file, "            ");
     for (int i = 0; i < pCounter; i++)
@@ -195,7 +197,7 @@ int main(int argc, char const *argv[])
         return EXIT_FAILURE;
     }
     // File outpout
-    FILE *new_file;
+    FILE *new_file; // wchen466
     new_file = fopen("cpu_scheduling_output_file.txt", "a");
     // Check if the file can be opened
     if (!new_file)
@@ -254,6 +256,7 @@ int main(int argc, char const *argv[])
         {
             processArr[proCounter] = (char*)malloc(strlen(splitArr[p]) + 1);
             strcpy(processArr[proCounter], splitArr[p]);
+            // wchen466
             proCounter++;
         }
         // Calls fcfs() and pass in processArr, proCounte and new_file
