@@ -110,6 +110,9 @@ int sjf(char **arr_sjf, int pCounter)
             b. Else, time remains = process time - tq, proceed FCFS
         2. That's pretty much it lol
 */
+/*
+    Main rr function
+*/
 int rr(char **arr_rr, int pCounter, int tq)
 {
     int flag = 0; // 0 = false, 1 = true
@@ -122,17 +125,21 @@ int rr(char **arr_rr, int pCounter, int tq)
         pQueue[i] = atoi(arr_rr[i]);
         printf("P%d ", i + 1);
     }
-
     while (flag == 0)
     {
         for (int i = 0; i < pCounter; i++)
         {
-            if (pQueue[i] >= tq)
+            if (pQueue[i] > tq)
             {
                 pQueue[i] -= tq;
                 printf("P%d ", i + 1);
             }
-            else if (pQueue[i] < tq)
+            else if (pQueue[i] <= tq)
+            {
+                process_remains --;
+                break;
+            }
+            else 
             {
                 process_remains --;
                 break;
@@ -143,11 +150,10 @@ int rr(char **arr_rr, int pCounter, int tq)
                 flag = 1;
             }
     }
-    
-
-       
+    printf("\n");
     return 0;
 }
+
 
 
 
