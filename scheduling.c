@@ -116,10 +116,8 @@ int rr(char **arr_rr, int pCounter, int tq)
     for (int i = 0; i < pCounter; i++)
     {
         pQueue[i] = atoi(arr_rr[i]);
-        printf("%d ", pQueue[i]);
+        printf("P%d ", i + 1);
     }
-    printf("            \n\n");
-    printf("                ");
     while (finished == 0)
     {
         process_remains = pCounter;
@@ -128,7 +126,7 @@ int rr(char **arr_rr, int pCounter, int tq)
             if (pQueue[i] > tq)
             {
                 pQueue[i] = pQueue[i] - tq;
-                printf("%d ", pQueue[i]);
+                printf("P%d ", i + 1);
             }
             else if (pQueue[i] <= tq)
             {
@@ -139,10 +137,7 @@ int rr(char **arr_rr, int pCounter, int tq)
                 finished = 1;
             }
         }
-        printf("            \n\n");
-        printf("                ");
     }  
-    printf("\n");
     return 0;
 }
 
