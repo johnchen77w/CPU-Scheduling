@@ -19,11 +19,12 @@ int fcfs(char **arr_fcfs, int pCounter, FILE *new_file)
     int totalTime = 0;
     fprintf(new_file, "        Order of selection by CPU:  \n\n");
     fprintf(new_file, "            ");
+    // Print the order selected by the CPU as-is
     for (int i = 0; i < pCounter; i++) {
         fprintf(new_file, "P%d ", i+1);
     }
     fprintf(new_file, "\n\n        Individual waiting times for each process: \n\n");
-
+    // Loop through the array to calculate each process time
     for (int j = 0; j < pCounter; j++) {
         fprintf(new_file, "            P%d = %d\n", j+1, finalTime);
         finalTime = finalTime + atoi(arr_fcfs[j]);
@@ -33,7 +34,6 @@ int fcfs(char **arr_fcfs, int pCounter, FILE *new_file)
     fprintf(new_file, "\n        Average waiting time = %0.1f \n\n", (double)totalTime/pCounter);
     return 0;
 }
-
 
 
 /*
@@ -52,11 +52,15 @@ int sjf_cmp(const void *a, const void *b)
 {
     struct sjf_struct *a1 = (struct sjf_struct *)a;
     struct sjf_struct *a2 = (struct sjf_struct *)b;
+    // Compare the first value to the second value
     if ((*a1).value < (*a2).value)
+        // Return -1 if the first value is smaller than the second value
         return -1;
     else if ((*a1).value > (*a2).value)
+        // Return 1 if the first value is larger than the second value
         return 1;
     else
+        // Return 0 if the first value is equal to the second value
         return 0;
 }
 
@@ -65,18 +69,27 @@ int sjf_cmp(const void *a, const void *b)
 */
 int sjf(char **arr_sjf, int pCounter, FILE *new_file)
 {
-    char *temp;
+    int temp;
     int finalTime = 0;
     int totalTime = 0;
+    int localArray [pCounter];
     struct sjf_struct objects[pCounter];
+    // Preserve arr_sjf's original elements' index and value
     for (int i = 0; i < pCounter; i++)
     {
         objects[i].value = atoi(arr_sjf[i]);
         objects[i].index = i;
     }
+    // Copy the elements from the original array to a local array to avoid overwriting
+    for (int i = 0; i < pCounter; i++)
+    {
+        localArray[i] = atoi(arr_sjf[i]);
+    }
+    // Sort the array into ascending order
     qsort(objects, pCounter, sizeof(objects[0]), sjf_cmp);
     fprintf(new_file, "        Order of selection by CPU:  \n\n");
     fprintf(new_file, "            ");
+    // Loop through the whole array and print the order selected by CPU
     for (int i = 0; i < pCounter; i++)
     {
         fprintf(new_file,      "P%d ", objects[i].index + 1); //will give 1 2 0
@@ -86,15 +99,15 @@ int sjf(char **arr_sjf, int pCounter, FILE *new_file)
     {
         for (int j = i + 1; j < pCounter; j++)
         {
-            if (atoi(arr_sjf[i]) > atoi(arr_sjf[j]))
+            if (localArray[i] > localArray[j])
             {
-                temp = arr_sjf[i];
-                arr_sjf[i] = arr_sjf[j];
-                arr_sjf[j] = temp;
+                temp = localArray[i];
+                localArray[i] = localArray[j];
+                localArray[j] = temp;
             }
         }
         fprintf(new_file, "            P%d = %d\n", objects[i].index + 1, finalTime);
-        finalTime = finalTime + atoi(arr_sjf[i]);
+        finalTime = finalTime + localArray[i];
         totalTime = totalTime + finalTime;
     }
     totalTime = totalTime - finalTime;
@@ -111,8 +124,8 @@ int rr(char **arr_rr, int pCounter, int tq, FILE *new_file)
     int finished = 0; // 0 = finished, 1 = not finished yet
     int process_remains;
     int pQueue [pCounter]; 
-    fprintf(new_file, "            Order of selection by CPU:  \n\n");
-    fprintf(new_file, "                ");
+    fprintf(new_file, "        Order of selection by CPU:  \n\n");
+    fprintf(new_file, "            ");
     for (int i = 0; i < pCounter; i++)
     {
         pQueue[i] = atoi(arr_rr[i]);
@@ -142,7 +155,7 @@ int rr(char **arr_rr, int pCounter, int tq, FILE *new_file)
             }
         }
     }  
-    fprintf(new_file, "\n\n");
+    fprintf(new_file, "\n\n        Turnaround time for each process: \n");
     return 0;
 }
 
@@ -215,11 +228,10 @@ int main(int argc, char const *argv[])
         }
         fprintf(new_file, "    Ready Queue %lu Applying FCFS Scheduling:\n\n", j+1);
         fcfs(processArr, proCounter, new_file);
-        fprintf(new_file, "    Ready Queue %zu Applying RR Scheduling...\n\n", j+1);
-        rr(processArr, proCounter, timeQuantum, new_file);
         fprintf(new_file, "    Ready Queue %zu Applying SJF Scheduling...\n\n", j+1);
         sjf(processArr, proCounter, new_file);
-
+        fprintf(new_file, "    Ready Queue %zu Applying RR Scheduling...\n\n", j+1);
+        rr(processArr, proCounter, timeQuantum, new_file);
     }
 
 
