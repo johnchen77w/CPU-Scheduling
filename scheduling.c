@@ -128,7 +128,11 @@ int rr(char **arr_rr, int pCounter, int tq)
                 pQueue[i] = pQueue[i] - tq;
                 printf("P%d ", i + 1);
             }
-            else if (pQueue[i] <= tq)
+            else if (pQueue[i] < tq)
+            {
+                process_remains --;
+            }
+            else if (pQueue[i] == tq)
             {
                 process_remains --;
             }
