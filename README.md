@@ -5,4 +5,6 @@ This project demonstrates three different ready queues
 - Shortest Job First (SJF) -------------------- COMPLETED
 - Round Robin (RR) -------------------------- UNDER DEVELOPMENT
 
-MAKEFILE -------------------------------------- UNDER DEVELOPMENT
+This program will write to an external file
+
+MAKEFILE -------------------------------------- COMPLETED
