@@ -127,73 +127,59 @@ int rr(char **arr_rr, int pCounter, int tq)
 {
     int finished = 0; // 0 = finished, 1 = not finished yet
     int process_remains;
+    int position;
     int pQueue [pCounter]; 
     int posArr [pCounter];      // Array stores the order of finishes       
     int taArr [pCounter];       // Array stores the turnaround time in the order of finishes
-    int flagArr[pCounter];      // Array stores check integers 
+    int startTimer [pCounter];
+    int finishTimer [pCounter];
     printf("Order of selection by CPU:  \n");
+    for (int i = 0; i < pCounter; i++)
+    {
+        startTimer[i] = 0;
+    }
+    
     // Copy each process time to a local queue and print them out as FCFS
+    // First time visit!
     for (int i = 0; i < pCounter; i++)
     {
         pQueue[i] = atoi(arr_rr[i]);
-        printf( "P%d ", i + 1);
+        if (pQueue[i] > tq)
+        {
+            startTimer[i] = tq;
+            finishTimer[i] = startTimer[i];
+            printf( "P%d %d ", i + 1, startTimer[i]);   
+        }
+        else
+        {
+            startTimer[i] = pQueue[i];
+            taArr[i] = startTimer[i];
+        }    
     }
     // Set all elements in positionArray and turnaroundArray to 0
     for (int i = 0; i < pCounter; i++)
     {
         posArr[i] = 0;
-        taArr[i] = 0;
-        flagArr[i] = 0;
     }
-    // Loop until processes has a CPU burst time smaller than time quantum
     while (finished == 0)
     {
-        // Set up remainding processes. Exit while loop when remainding processes are 0
         process_remains = pCounter;
-        // Loop through each process stored in the local queue 
         for (int i = 0; i < pCounter; i++)
         { 
-            flagArr[i] = 1;
-            // If the ith process has a CPU burst time greater than the time quantum
             if (pQueue[i] > tq)
             {
-                // Print out its process number
-                printf("P%d ", i + 1);
-                // Add time quantum to ith element's turnaround time
-                for (int j = 0; j < pCounter; j++)
-                {
-                    if (flagArr[j] == 1)
-                    {
-                        taArr[j] += tq;
-                    }
-                }    
-                // Subtract time quantum from ith element's CPU burst time
                 pQueue[i] -= tq;
+                finishTimer[i] += tq;
+                printf( "P%d %d ", i + 1, finishTimer[i]);   
             }
-            // If the ith process has a CPU burst time smaller than or equals to the time quantum
             else if (pQueue[i] <= tq)
-            {
-                // Add (the rest of) CPU burst time to ith element's turnaround time
-                for (int j = 0; j < pCounter; j++)
-                {
-                    if (flagArr[j] == 1)
-                    {
-                        taArr[j] += pQueue[i];
-                        
-                    }
-                    flagArr[j] = 0;
-                }
-                // Add ith process's process number to the ith position in the position array
-                posArr[i] = i + 1;
-                // Set the CPU burst time to 0
-                pQueue[i] = 0;
-                // Decrement remaining processes number by 1
+            {   
+                finishTimer[i] += pQueue[i];
                 process_remains --;
             }
-            // Check if there are any processes left
+            
             if (process_remains == 0)
             {
-                // Set finished = 1 if there are none left
                 finished = 1;
             }   
         }
@@ -204,6 +190,10 @@ int rr(char **arr_rr, int pCounter, int tq)
         printf("P%d = %d\n", posArr[i], taArr[i]);
     }
     
+
+
+
+
     return 0;
 }
 
