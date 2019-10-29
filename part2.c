@@ -123,73 +123,8 @@ int sjf(char **arr_sjf, int pCounter, FILE *new_file)
 /**
  * Main rr function
 */
-int rr(char **arr_rr, int pCounter, int tq)
+int rr(char **arr_rr, int pCounter, int tq, FILE *new_file)
 {
-    // int finished = 0; // 0 = finished, 1 = not finished yet
-    // int process_remains;
-    // int ta;
-    // int pQueue [pCounter]; 
-    // int posArr [pCounter];      // Array stores the order of finishes       
-    // int taArr [pCounter];       // Array stores the turnaround time in the order of finishes
-    // int flagArr[pCounter];      // Array stores check integers 
-    // printf("Order of selection by CPU:  \n");
-    // // Copy each process time to a local queue and print them out as FCFS
-    // for (int i = 0; i < pCounter; i++)
-    // {
-    //     pQueue[i] = atoi(arr_rr[i]);
-    //     printf( "P%d ", i + 1);
-    // }
-    // // Set all elements in positionArray and turnaroundArray to 0
-    // for (int i = 0; i < pCounter; i++)
-    // {
-    //     posArr[i] = 0;
-    //     taArr[i] = 0;
-    //     flagArr[i] = 0;
-    // }
-    // // Loop until processes has a CPU burst time smaller than time quantum
-    // while (finished == 0)
-    // {
-    //     int pos = 0;
-    //     // Set up remainding processes. Exit while loop when remainding processes are 0
-    //     process_remains = pCounter;
-    //     // Loop through each process stored in the local queue 
-        
-    //     for (int i = 0; i < pCounter; i++)
-    //     { 
-    //         int temp;
-    //         flagArr[i] = 1;
-    //         // if (pQueue[i] == atoi(arr_rr[i]))
-    //         // {
-    //         //     taArr[i] = ta;
-    //         // }
-            
-    //         if (pQueue[i] > tq)
-    //         {
-    //             printf("P%d ", i + 1);
-    //             taArr[i] = temp + tq; 
-    //             temp = taArr[i]; 
-    //             pQueue[i] -= tq;
-    //         }
-    //         else
-    //         {
-    //             taArr[i] += pQueue[i];
-    //             posArr[pos] = i + 1;
-    //             pos ++;
-    //             pQueue[i] = 0;
-    //             process_remains --;
-    //         } 
-    //     }
-    //     if (process_remains == 0)
-    //         {
-    //             finished = 1;
-    //             // continue;
-    //         }   
-    // }  
-    // printf("\n\nTurnaround time for each process: \n");
-    // for (int i = 0; i < pCounter; i++)
-    // {
-    //     printf("P%d = %d\n", posArr[i], taArr[i]);
-    // }  
     int pos = 0;
     int finished = 0; 
     int currentTime = 0;
@@ -199,6 +134,7 @@ int rr(char **arr_rr, int pCounter, int tq)
     int startTimeArr [pCounter];
     int finalPosArray [pCounter];
     int taArr [pCounter];
+    // Initialize all arrays
     for (int i = 0; i < pCounter; i++)
     {
         localArr[i] = atoi(arr_rr[i]);
@@ -207,67 +143,86 @@ int rr(char **arr_rr, int pCounter, int tq)
         finalPosArray[i] = 0;
         taArr [pCounter] = 0;
     }
-    printf("Order selected by CPU \n");
+    fprintf(new_file, "Order of selection by CPU \n");
+    // Main while loop, keep execute until finish condition reaches
     while (finished == 0)
     { 
+        // Here, process one array at a time
         for (int i = 0; i < pCounter; i++)
         { 
+            // Prints out the order selected by CPU
             if (localArr[i] > 0)
             {
-                printf("P%d ", i+1);
+                fprintf(new_file, "P%d ", i+1);
             }
+            // Check to make sure that the remaining CPU burst time is not 0
             if (localArr[i] != 0)
             {
+                // Check if the remaining CPU burst time is greater than time quantum
                 if (localArr[i] > tq)
                 {   
+                    // Check to see if it has never been visited
                     if (checkArr[i] == 0)
                     {
+                        // If never been visited, set start time
                         startTimeArr[i] = currentTime; 
+                        // Set visited by changing 0 to 1 in the checkArr
                         checkArr[i] = 1;
-                    }            
+                    }    
+                    // Increment the current time by tq        
                     currentTime += tq; 
+                    // Decrement the CPU burst time remaining by tq
                     localArr[i] -= tq;
                 }
+                // Check if the remaining CPU burst time is greater than time quantum
                 else
                 {
+                    // Check if the remaining CPU burst time is greater than time quantum
                     if (checkArr[i] == 0)
                     {
+                        // If never been visited, set start time
                         startTimeArr[i] = currentTime; 
+                        // Set visited by changing 0 to 1 in the checkArr
                         checkArr[i] = 1;
-                    }            
+                    }    
+                    // Increment the current time by the rest of CPU burst time                
                     currentTime += localArr[i]; 
+                    // Store the process number to the corresponding index position in the finalPosArray
                     finalPosArray[pos] = i + 1;
+                    // Store the turnaround time to the corresponding index position in the taArr
                     taArr[pos] = currentTime - startTimeArr[i];
+                    // Set remaining CPU burst time to 0
                     localArr[i] = 0;
+                    // Increment the position in the finalPosArr by 1
                     pos ++;
                 }
             }
+            // Initialize a flag variable
             int flag = 0;
+            // Loop to check if we finished all processes
             for (int j = 0; j < pCounter; j++)
             {  
+                // Check for any remaining CPU burst time that are not 0
                 if(localArr[j] != 0)
                 {
+                    // Set flag to 1 (not finished) if there are any
                     flag = 1;
                 }
             }
+            // Terminates the while loop if flags are 0
             if (flag == 0)
             {
                 finished = 1;
             }
         }
-        
     }
-    printf("\n\n");
+    fprintf(new_file, "\n\n");
+    // Print out the order of processes and their corresponding turnaround times
     for (int i = 0; i < pCounter; i++)
     {
-        printf("P%d = %d\n", finalPosArray[i], taArr[i]);
+        fprintf(new_file, "P%d = %d\n", finalPosArray[i], taArr[i]);
     }
-    
-    
-
-
-
-
+    fprintf(new_file, "\n");
     return 0;
 }
 
@@ -364,8 +319,8 @@ int main(int argc, char const *argv[])
         fprintf(new_file, "Ready Queue %zu Applying SJF Scheduling...\n\n", j+1);
         sjf(processArr, proCounter, new_file);
         // Calls rr() and pass in processArr, proCounte, time quantum and new_file
-        printf("Ready Queue %zu Applying RR Scheduling:\n\n", j+1);
-        rr(processArr, proCounter, timeQuantum);
+        fprintf(new_file, "Ready Queue %zu Applying RR Scheduling:\n\n", j+1);
+        rr(processArr, proCounter, timeQuantum, new_file);
     }
     // Close all files
     fclose(new_file);
