@@ -125,70 +125,144 @@ int sjf(char **arr_sjf, int pCounter, FILE *new_file)
 */
 int rr(char **arr_rr, int pCounter, int tq)
 {
-    int finished = 0; // 0 = finished, 1 = not finished yet
-    int process_remains;
-    int position;
-    int pQueue [pCounter]; 
-    int posArr [pCounter];      // Array stores the order of finishes       
-    int taArr [pCounter];       // Array stores the turnaround time in the order of finishes
-    int startTimer [pCounter];
-    int finishTimer [pCounter];
-    printf("Order of selection by CPU:  \n");
+    // int finished = 0; // 0 = finished, 1 = not finished yet
+    // int process_remains;
+    // int ta;
+    // int pQueue [pCounter]; 
+    // int posArr [pCounter];      // Array stores the order of finishes       
+    // int taArr [pCounter];       // Array stores the turnaround time in the order of finishes
+    // int flagArr[pCounter];      // Array stores check integers 
+    // printf("Order of selection by CPU:  \n");
+    // // Copy each process time to a local queue and print them out as FCFS
+    // for (int i = 0; i < pCounter; i++)
+    // {
+    //     pQueue[i] = atoi(arr_rr[i]);
+    //     printf( "P%d ", i + 1);
+    // }
+    // // Set all elements in positionArray and turnaroundArray to 0
+    // for (int i = 0; i < pCounter; i++)
+    // {
+    //     posArr[i] = 0;
+    //     taArr[i] = 0;
+    //     flagArr[i] = 0;
+    // }
+    // // Loop until processes has a CPU burst time smaller than time quantum
+    // while (finished == 0)
+    // {
+    //     int pos = 0;
+    //     // Set up remainding processes. Exit while loop when remainding processes are 0
+    //     process_remains = pCounter;
+    //     // Loop through each process stored in the local queue 
+        
+    //     for (int i = 0; i < pCounter; i++)
+    //     { 
+    //         int temp;
+    //         flagArr[i] = 1;
+    //         // if (pQueue[i] == atoi(arr_rr[i]))
+    //         // {
+    //         //     taArr[i] = ta;
+    //         // }
+            
+    //         if (pQueue[i] > tq)
+    //         {
+    //             printf("P%d ", i + 1);
+    //             taArr[i] = temp + tq; 
+    //             temp = taArr[i]; 
+    //             pQueue[i] -= tq;
+    //         }
+    //         else
+    //         {
+    //             taArr[i] += pQueue[i];
+    //             posArr[pos] = i + 1;
+    //             pos ++;
+    //             pQueue[i] = 0;
+    //             process_remains --;
+    //         } 
+    //     }
+    //     if (process_remains == 0)
+    //         {
+    //             finished = 1;
+    //             // continue;
+    //         }   
+    // }  
+    // printf("\n\nTurnaround time for each process: \n");
+    // for (int i = 0; i < pCounter; i++)
+    // {
+    //     printf("P%d = %d\n", posArr[i], taArr[i]);
+    // }  
+    int pos = 0;
+    int finished = 0; 
+    int currentTime = 0;
+    int processNum = pCounter;
+    int localArr [pCounter];
+    int checkArr [pCounter];
+    int startTimeArr [pCounter];
+    int finalPosArray [pCounter];
+    int taArr [pCounter];
     for (int i = 0; i < pCounter; i++)
     {
-        startTimer[i] = 0;
+        localArr[i] = atoi(arr_rr[i]);
+        checkArr[i] = 0;
+        startTimeArr[i] = 0;
+        finalPosArray[i] = 0;
+        taArr [pCounter] = 0;
     }
-    
-    // Copy each process time to a local queue and print them out as FCFS
-    // First time visit!
-    for (int i = 0; i < pCounter; i++)
-    {
-        pQueue[i] = atoi(arr_rr[i]);
-        if (pQueue[i] > tq)
-        {
-            startTimer[i] = tq;
-            finishTimer[i] = startTimer[i];
-            printf( "P%d %d ", i + 1, startTimer[i]);   
-        }
-        else
-        {
-            startTimer[i] = pQueue[i];
-            taArr[i] = startTimer[i];
-        }    
-    }
-    // Set all elements in positionArray and turnaroundArray to 0
-    for (int i = 0; i < pCounter; i++)
-    {
-        posArr[i] = 0;
-    }
+    printf("Order selected by CPU \n");
     while (finished == 0)
-    {
-        process_remains = pCounter;
+    { 
         for (int i = 0; i < pCounter; i++)
         { 
-            if (pQueue[i] > tq)
+            if (localArr[i] > 0)
             {
-                pQueue[i] -= tq;
-                finishTimer[i] += tq;
-                printf( "P%d %d ", i + 1, finishTimer[i]);   
+                printf("P%d ", i+1);
             }
-            else if (pQueue[i] <= tq)
-            {   
-                finishTimer[i] += pQueue[i];
-                process_remains --;
+            if (localArr[i] != 0)
+            {
+                if (localArr[i] > tq)
+                {   
+                    if (checkArr[i] == 0)
+                    {
+                        startTimeArr[i] = currentTime; 
+                        checkArr[i] = 1;
+                    }            
+                    currentTime += tq; 
+                    localArr[i] -= tq;
+                }
+                else
+                {
+                    if (checkArr[i] == 0)
+                    {
+                        startTimeArr[i] = currentTime; 
+                        checkArr[i] = 1;
+                    }            
+                    currentTime += localArr[i]; 
+                    finalPosArray[pos] = i + 1;
+                    taArr[pos] = currentTime - startTimeArr[i];
+                    localArr[i] = 0;
+                    pos ++;
+                }
             }
-            
-            if (process_remains == 0)
+            int flag = 0;
+            for (int j = 0; j < pCounter; j++)
+            {  
+                if(localArr[j] != 0)
+                {
+                    flag = 1;
+                }
+            }
+            if (flag == 0)
             {
                 finished = 1;
-            }   
+            }
         }
-    }  
-    printf("\n\nTurnaround time for each process: \n");
+        
+    }
+    printf("\n\n");
     for (int i = 0; i < pCounter; i++)
     {
-        printf("P%d = %d\n", posArr[i], taArr[i]);
+        printf("P%d = %d\n", finalPosArray[i], taArr[i]);
     }
+    
     
 
 
